@@ -1,15 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// ✅ Base URL from env
+const API = import.meta.env.VITE_API_BASE_URL;
+
 export const uploadedVideo = createAsyncThunk(
-  "video-upload",
+  "video/upload",
   async (data, { rejectWithValue }) => {
-    console.log("data,", data);
-
     try {
-
-      const token=localStorage.getItem("accessToken")
+      const token = localStorage.getItem("accessToken");
       const formData = new FormData();
 
       formData.append("title", data.title);
@@ -18,160 +17,113 @@ export const uploadedVideo = createAsyncThunk(
       formData.append("thumbnail", data.thumbnail);
 
       const response = await axios.post(
-        "http://localhost:8000/api/v1/video/upload-video",
+        `${API}${import.meta.env.VITE_UPLOAD_VIDEO_ENDPOINT}`,
         formData,
         {
-
-          headers:{
-            Authorization:token
-          }
+          headers: {
+            Authorization: token,
+          },
         }
       );
-      console.log("response", response.data);
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-
-export const getAllvideo=createAsyncThunk("get/video",async(_,{rejectWithValue})=>{
-
-
-try {
-
-
-  const response= await axios.get("http://localhost:8000/api/v1/video/get-video",{
-
-
-    
-  })
-
-  console.log("response.data",response.data)
-
-  return response.data?.data
-} catch (error) {
-  
-}
-
-
-})
-
-
-export const playSingleVideo=createAsyncThunk("play/video",async(id,{rejectWithValue})=>{
-try {
-
-  
-  const response= await axios.get(`http://localhost:8000/api/v1/video/${id}`,{
-  })
-
-  console.log("response.data",response.data?.data)
-
-return response.data?.data
-  
-} catch (error) {
-  
-}
-
-
-})
-
-
-export const likeVideos=createAsyncThunk("like/video",async(id,{rejectWithValue})=>{
-
-try {
-
-  const token=localStorage.getItem("accessToken")
-  const response=await axios.get(`http://localhost:8000/api/v1/video/like/${id}`,{
-
-    headers:{
-      Authorization:token
-    }
-  })
-  console.log("responsezz .data",response.data.data?.likedVideo)
-  return response.data.data?.likedVideo
-  
-} catch (error) {
-  console.log("something went wrong",error)
-}
-
-})
-
-export const deletelike=createAsyncThunk("like/video",async(id,{rejectWithValue})=>{
-
-try {
-
-  const token=localStorage.getItem("accessToken")
-  const response=await axios.delete(`http://localhost:8000/api/v1/video/deletelike/${id}`,{
-
-    headers:{
-      Authorization:token
-    }
-  })
-  console.log("delete like data .data",response.data)
-  return response.data
-  
-} catch (error) {
-  console.log(" something went wrong in delete like",error)
-}
-
-})
-
-
-
-
-const initialState={
-
-    videos:[],
-    likeVideo:[],
-    singleVideo:null,
-    loading:false,
-    error:null
-}
-
-
-
-const videoStore=createSlice(
-  {
-    name:"video",
-    initialState,
-    reducers:{},
-    extraReducers:(builder)=>{
-      builder
-      .addCase(uploadedVideo.pending,(state)=>{
-
-        state.loading=true 
-        state.error=null
-      }
-      )
-      .addCase(uploadedVideo.fulfilled,(state)=>{
-
-        state.loading=false
-      })
-      .addCase(getAllvideo.pending,(state)=>{
-            state.loading=true
-      })
-      .addCase(getAllvideo.fulfilled,(state,action)=>{
-          state.loading=false
-       state.videos=action.payload
-
-
-      }
-
-      )
-      .addCase(playSingleVideo.pending,(state)=>{
-        state.loading=true
-
-      })
-      .addCase(playSingleVideo.fulfilled,(state,action)=>{
-       state.loading=false,
-       state.singleVideo=action.payload.data
-
-      })
-
+export const getAllvideo = createAsyncThunk(
+  "video/getAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API}${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`
+      );
+      return response.data?.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
-)
+);
 
+export const playSingleVideo = createAsyncThunk(
+  "video/play",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API}${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`);
+      return response.data?.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
 
-export default videoStore.reducer
+export const likeVideos = createAsyncThunk(
+  "video/like",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`${API}${import.meta.env.VITE_LIKE_VIDEO_ENDPOINT}/${id}`, {
+        headers: { Authorization: token },
+      });
+      return response.data.data?.likedVideo;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const deletelike = createAsyncThunk(
+  "video/deleteLike",
+  async (id, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.delete(`${API}${import.meta.env.VITE_DELETE_LIKE_VIDEO_ENDPOINT}/${id}`, {
+        headers: { Authorization: token },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+const initialState = {
+  videos: [],
+  likeVideo: [],
+  singleVideo: null,
+  loading: false,
+  error: null,
+};
+
+const videoStore = createSlice({
+  name: "video",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(uploadedVideo.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadedVideo.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(getAllvideo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllvideo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.videos = action.payload;
+      })
+      .addCase(playSingleVideo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(playSingleVideo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.singleVideo = action.payload;
+      });
+  },
+});
+
+export default videoStore.reducer;

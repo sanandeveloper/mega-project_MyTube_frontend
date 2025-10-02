@@ -117,7 +117,7 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: (
-          <Protected authentication={false}>
+          <Protected authentication >
             <ShowVideo />
           </Protected>
         ),
@@ -125,7 +125,7 @@ const router = createBrowserRouter([
       {
         path: "/video/:id/:username",
         element: (
-          <Protected >
+          <Protected authentication >
             <VideoPlayer />
           </Protected>
         ),
@@ -133,7 +133,7 @@ const router = createBrowserRouter([
       {
         path: "/userchannel/:username",
         element: (
-          <Protected >
+          <Protected authentication >
             <UserChannel />
           </Protected>
         ),

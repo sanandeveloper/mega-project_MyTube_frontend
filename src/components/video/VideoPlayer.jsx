@@ -81,25 +81,47 @@ function VideoPlayer() {
         });
     }
   };
-  if ( !singleVideo || !Channel) {
-    return (
-      <div className="flex justify-center items-center h-100">Loading...</div>
-    );
-  }
+  
+   if (!singleVideo || !Channel) {
+  return (
+    <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="flex flex-col items-center">
+        {/* Spinner */}
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        
+        {/* Text */}
+        <p className="mt-4 text-gray-600 font-medium">Loading video...</p>
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen  text-black">
       {/* Main Video Section */}
       <div className="flex-1 flex flex-col items-center lg:items-start px-4 lg:px-10 py-6">
         {/* Video with 16:9 ratio */}
-        <div className="w-full max-w-5xl aspect-video rounded-lg overflow-hidden shadow-lg">
-          <video
-            src={singleVideo.videoFile}
-            controls
-            autoPlay
-            className="w-full h-140 object-cover"
-          />
-        </div>
+       <div className="w-full max-w-5xl  bg-black">
+  <video
+    src={singleVideo.videoFile}
+    controls
+    autoPlay
+    playsInline
+    className="w-full max-h-[600px] rounded-lg shadow-lg"
+  >
+    {/* Subtitles / Captions */}
+    <track
+      src="/subtitles-en.vtt"
+      kind="subtitles"
+      srcLang="en"
+      label="English"
+      default
+    />
+  </video>
+
+  {/* Extra Controls like Download */}
+  </div>
+
 
         {/* Title */}
         <h2 className="mt-4 text-xl lg:text-2xl font-bold w-full max-w-5xl">

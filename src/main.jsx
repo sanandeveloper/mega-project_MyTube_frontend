@@ -125,7 +125,7 @@ const router = createBrowserRouter([
       {
         path: "/video/:id/:username",
         element: (
-          <Protected authentication>
+          <Protected >
             <VideoPlayer />
           </Protected>
         ),

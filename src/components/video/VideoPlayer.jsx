@@ -81,7 +81,7 @@ function VideoPlayer() {
         });
     }
   };
-  if (!singleVideo || !Channel) {
+  if ( !singleVideo || !Channel) {
     return (
       <div className="flex justify-center items-center h-100">Loading...</div>
     );

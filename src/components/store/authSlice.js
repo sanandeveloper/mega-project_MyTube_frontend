@@ -313,7 +313,7 @@ export const userChannel = createAsyncThunk(
       // const token=localStorage.getItem("accessToken")
 
       const response = await axios.get(
-        `http://localhost:8000/api/v1/users/user-channel/${username}`,
+        `${import.meta.env.VITE_API_BASE_URL}/${import.meta.env.VITE_USER_CHANNEL_ENDPOINT}/${username}`,
         {
           // headers:{
           //   Authorization:token

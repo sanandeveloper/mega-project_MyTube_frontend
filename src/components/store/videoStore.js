@@ -121,7 +121,8 @@ const videoStore = createSlice({
       })
       .addCase(playSingleVideo.fulfilled, (state, action) => {
         state.loading = false;
-        state.singleVideo = action.payload;
+        state.singleVideo = action.payload.data;
+        console.log("single video data",state.singleVideo)
       });
   },
 });

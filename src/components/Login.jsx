@@ -14,7 +14,7 @@ function Login() {
   } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { loading } = useSelector((state) => state.auth);
 
   const onSubmit = (data) => {
     if (!data) {
@@ -30,9 +30,9 @@ function Login() {
       })
       .catch(() => {
         setError("Email or password is incorrect");
-        setTimeout(()=>{
+        setTimeout(() => {
           setError("");
-        },1500)
+        }, 1500);
       });
   };
 
@@ -83,11 +83,17 @@ function Login() {
           {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
           {/* Submit button */}
+
           <button
             type="submit"
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition duration-200"
+            disabled={loading}
+            className="w-full flex items-center justify-center py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition duration-200 disabled:opacity-70"
           >
-            Login
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </form>
 

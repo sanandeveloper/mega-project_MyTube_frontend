@@ -25,7 +25,7 @@ export const createUser = createAsyncThunk(
         }
       );
 
-      return response.data;
+      return true;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -345,7 +345,7 @@ const authSlice = createSlice({
       .addCase(createUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createUser.fulfilled, (state, action) => {
+      .addCase(createUser.fulfilled, (state) => {
         state.loading = false;
       })
       .addCase(createUser.rejected, (state, action) => {
@@ -355,17 +355,25 @@ const authSlice = createSlice({
         state.status = false;
         state.loading = true;
       })
-      .addCase(loginUser.fulfilled, (state, action) => {
+      .addCase(loginUser.fulfilled, (state) => {
         state.loading = false;
         state.status = true;
+      }).addCase(loginUser.rejected, (state) => {
+        state.loading = false;
+       
+      })
+      .addCase(logoutUser.pending,(state)=>{
+        state.loading=true
       })
       .addCase(logoutUser.fulfilled, (state) => {
         (state.user = null), (state.status = false);
         state.loading = false;
 
-        console.log("user", state.user);
-        console.log("status", state.status);
-        console.log("loading", state.loading);
+       
+      }).addCase(logoutUser.rejected, (state) => {
+        state.loading = false;
+
+       
       })
       .addCase(changeAvatar.pending, (state) => {
         state.loading = true;

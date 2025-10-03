@@ -2,22 +2,30 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllvideo } from "../store/videoStore";
 import { Link } from "react-router-dom";
+import { timeAgo } from "../../utils/Timeago";
+
+
 
 function ShowVideo() {
   const dispatch = useDispatch();
 
   const videos = useSelector((state) => state.video.videos || []);
   const loading = useSelector((state) => state.video.loading);
+  console.log("show video", videos);
 
   useEffect(() => {
-   if (videos) {
-     dispatch(getAllvideo());
-   }
+    if (videos) {
+      dispatch(getAllvideo());
+    }
   }, []);
 
-  // if (loading) {
-  //   return <div className="">Loading....</div>;
-  // }
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
@@ -71,7 +79,7 @@ function ShowVideo() {
 
                   {/* Views and time */}
                   <p className="text-xs text-gray-500">
-                    {video.views} views • {video.time}
+                    {video.views} views • {timeAgo(video.createdAt)}
                   </p>
                 </div>
               </div>

@@ -5,17 +5,18 @@ import { deletelike, likeVideos, playSingleVideo } from "../store/videoStore";
 import { ThumbsUp } from "lucide-react";
 import { userChannel } from "../store/authSlice";
 import { userSubscribed, userUnsubscribed } from "../store/subscriber";
-import { useState } from "react";
+
+
 
 function VideoPlayer() {
   const navigate = useNavigate();
   const { id, username } = useParams();
   const dispatch = useDispatch();
   const { loading, singleVideo } = useSelector((state) => state.video);
-  const { user, Channel } = useSelector((state) => state.auth);
-  console.log("channel.isubscribed", Channel);
+  const { user, Channel,status } = useSelector((state) => state.auth);
+  console.log("channel.isubscribed", Channel,"status",status);
 
-  console.log("channel", Channel || null);
+  console.log("channel", Channel );
   const hasUserLiked = singleVideo?.likedVideo?.includes(user?._id || null);
   console.log("singlevideodata", singleVideo);
 
@@ -63,7 +64,10 @@ function VideoPlayer() {
   };
 
   const handleSubscribeToggle = () => {
-    if (Channel.isSubscribed) {
+    if (!status) {
+      navigate("/login")
+    }
+    else if (Channel.isSubscribed) {
       dispatch(userUnsubscribed(Channel._id))
         .unwrap()
         .then(() => {
@@ -71,7 +75,7 @@ function VideoPlayer() {
             dispatch(userChannel(username));
           }
         });
-    } else {
+    } else  {
       dispatch(userSubscribed(Channel._id))
         .unwrap()
         .then(() => {

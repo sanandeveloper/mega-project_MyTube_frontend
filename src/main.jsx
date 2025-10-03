@@ -116,26 +116,22 @@ const router = createBrowserRouter([
       },
       {
         path: "/",
-        element: (
-          <Protected authentication >
-            <ShowVideo />
-          </Protected>
-        ),
+        element: <ShowVideo />,
       },
       {
         path: "/video/:id/:username",
         element: (
-          <Protected authentication >
+        
             <VideoPlayer />
-          </Protected>
+        
         ),
       },
       {
         path: "/userchannel/:username",
         element: (
-          <Protected authentication >
+   
             <UserChannel />
-          </Protected>
+       
         ),
       },
     ],

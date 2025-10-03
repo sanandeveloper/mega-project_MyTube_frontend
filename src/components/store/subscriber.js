@@ -61,13 +61,6 @@ const subscriberData = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(userSubscribed.fulfilled, (state, action) => {
-        state.subscriber = action.payload;
-        console.log("subscriber total", state.subscriber);
-      })
-      .addCase(userUnsubscribed.fulfilled, (state) => {
-        state.subscriber = null;
-      });
   },
 });
 

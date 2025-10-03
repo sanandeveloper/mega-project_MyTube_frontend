@@ -14,6 +14,10 @@ function SignUp() {
   const loading = useSelector((state) => state.auth.loading);
   const navigate = useNavigate();
 
+
+
+
+
   const {
     register,
     handleSubmit,
@@ -36,14 +40,7 @@ function SignUp() {
       });
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-  //       <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent"></div>
-  //       <p className="mt-4 text-white font-medium">Creating account...</p>
-  //     </div>
-  //   );
-  // }
+ 
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6">
@@ -167,12 +164,12 @@ function SignUp() {
           </div>
 
           {/* Button */}
-          <button
+          { loading ?  <button   className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-500 transition">Creating Account....</button>:<button
             type="submit"
             className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-700 transition"
           >
             Create Account
-          </button>
+          </button>}
         </form>
 
         {/* Footer */}

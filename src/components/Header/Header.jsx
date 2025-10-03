@@ -33,7 +33,7 @@ function Header() {
           className="flex items-center gap-2 cursor-pointer"
           onClick={() => navigate("/")}
         >
-          <img src="/public/MS.jpeg" alt="logo" className="w-8 h-8 rounded-2xl" />
+          <img src="/MS.jpeg" alt="logo" className="w-8 h-8 rounded-2xl" />
           <span className="font-semibold text-lg hidden sm:block">MyTube</span>
         </div>
 

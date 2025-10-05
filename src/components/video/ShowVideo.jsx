@@ -1,23 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllvideo } from "../store/videoStore";
 import { Link } from "react-router-dom";
 import { timeAgo } from "../../utils/Timeago";
-
-
+import Pagination from "../Pagination";
 
 function ShowVideo() {
   const dispatch = useDispatch();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(3);
 
-  const videos = useSelector((state) => state.video.videos || []);
-  const loading = useSelector((state) => state.video.loading);
-  console.log("show video", videos);
+  const { videos = [], loading, totalPages } = useSelector(
+    (state) => state.video
+  );
 
+  // ✅ Fetch videos whenever page or limit changes
   useEffect(() => {
-    if (videos) {
-      dispatch(getAllvideo());
-    }
-  }, []);
+    dispatch(getAllvideo({ page, limit }));
+  }, [dispatch, page, limit]);
 
   if (loading) {
     return (
@@ -36,9 +36,7 @@ function ShowVideo() {
             key={video._id}
             className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden cursor-pointer"
           >
-            {/* Thumbnail */}
             <Link to={`/video/${video._id}/${video.owner.username}`}>
-              {" "}
               <div className="relative w-full h-48 bg-gray-200">
                 {video.thumbnail ? (
                   <img
@@ -47,37 +45,29 @@ function ShowVideo() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="relative w-full h-48 bg-gray-200">
-                    <video
-                      className="w-full h-full object-cover"
-                      src={video.videoFile}
-                    ></video>
-                  </div>
+                  <video
+                    className="w-full h-full object-cover"
+                    src={video.videoFile}
+                  ></video>
                 )}
               </div>
             </Link>
 
-            {/* Video Info */}
             <div className="flex p-4">
-              {/* Channel Avatar */}
               <img
                 src={video.owner.avatar}
                 alt={video.channel}
                 className="w-10 h-10 rounded-full mr-3"
               />
 
-              {/* Title + Meta */}
               <div className="flex flex-col">
                 <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
                   {video.title}
                 </h3>
                 <div className="mt-1">
-                  {/* Channel name */}
                   <p className="text-sm font-medium text-gray-800 hover:text-black cursor-pointer">
                     {video.owner.fullName}
                   </p>
-
-                  {/* Views and time */}
                   <p className="text-xs text-gray-500">
                     {video.views} views • {timeAgo(video.createdAt)}
                   </p>
@@ -87,6 +77,9 @@ function ShowVideo() {
           </div>
         ))}
       </div>
+
+      {/* ✅ Pass totalPages here */}
+      <Pagination totalPages={totalPages || 1} setPage={setPage} page={page}  />
     </div>
   );
 }

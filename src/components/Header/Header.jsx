@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Search, Video, Menu, X } from "lucide-react";
 import LogoutBtn from "./LogoutBtn";
 
-function Header() {
+function Header(props) {
+
+  console.log("props",props)
   const authStatus = useSelector((state) => state.auth.status);
   const user = useSelector((state) => state.auth.user);
 

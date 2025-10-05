@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// ✅ Base URL from env
+
 const API = import.meta.env.VITE_API_BASE_URL 
 
 export const uploadedVideo = createAsyncThunk(
@@ -34,13 +34,21 @@ export const uploadedVideo = createAsyncThunk(
 
 export const getAllvideo = createAsyncThunk(
   "video/getAll",
-  async (_, { rejectWithValue }) => {
+  async ({page,limit}) => {
+    console.log("page",page)
     try {
       const response = await axios.get(
-        `${API}${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`
+        `${API}${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`,{
+          params:{
+            page:page,
+            limit
+          }
+        }
       );
+      console.log("totalvideos",response.data.data.totalpages)
       return response.data?.data;
     } catch (error) {
+      console.log("video not fetched")
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -50,7 +58,7 @@ export const playSingleVideo = createAsyncThunk(
   "video/play",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API}${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`);
+      const response = await axios.get(`${API}/${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`);
       return response.data?.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -63,7 +71,7 @@ export const likeVideos = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`${API}${import.meta.env.VITE_LIKE_VIDEO_ENDPOINT}/${id}`, {
+      const response = await axios.get(`${API}/${import.meta.env.VITE_LIKE_VIDEO_ENDPOINT}/${id}`, {
         headers: { Authorization: token },
       });
       return response.data.data?.likedVideo;
@@ -78,7 +86,7 @@ export const deletelike = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.delete(`${API}${import.meta.env.VITE_DELETE_LIKE_VIDEO_ENDPOINT}/${id}`, {
+      const response = await axios.delete(`${API}/${import.meta.env.VITE_DELETE_LIKE_VIDEO_ENDPOINT}/${id}`, {
         headers: { Authorization: token },
       });
       return response.data;
@@ -94,6 +102,7 @@ const initialState = {
   singleVideo: null,
   loading: false,
   error: null,
+  totalPages:null
 };
 
 const videoStore = createSlice({
@@ -111,10 +120,13 @@ const videoStore = createSlice({
       })
       .addCase(getAllvideo.pending, (state) => {
         state.loading = true;
+        
       })
       .addCase(getAllvideo.fulfilled, (state, action) => {
         state.loading = false;
-        state.videos = action.payload;
+        state.videos = action.payload.videos;
+        state.totalPages=action.payload.totalpages
+        console.log("satae.totalpages",state.totalPages)
       })
       .addCase(playSingleVideo.pending, (state) => {
         state.loading = true;

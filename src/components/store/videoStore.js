@@ -38,7 +38,7 @@ export const getAllvideo = createAsyncThunk(
     console.log("page",page)
     try {
       const response = await axios.get(
-        `${API}${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`,{
+        `${API}/${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`,{
           params:{
             page:page,
             limit

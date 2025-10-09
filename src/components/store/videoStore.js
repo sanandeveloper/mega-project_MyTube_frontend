@@ -58,7 +58,7 @@ export const playSingleVideo = createAsyncThunk(
   "video/play",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API}/${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`);
+      const response = await axios.get(`${API}${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`);
       return response.data?.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

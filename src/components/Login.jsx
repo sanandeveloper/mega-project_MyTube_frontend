@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "./store/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 function Login() {
   const [success, setSuccess] = useState(null);
@@ -14,7 +15,7 @@ function Login() {
   } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading } = useSelector((state) => state.auth);
+  const { loginLoading } = useSelector((state) => state.auth);
 
   const onSubmit = (data) => {
     if (!data) {
@@ -51,7 +52,7 @@ function Login() {
             </label>
             <input
               type="text"
-              placeholder="Enter your email"
+              placeholder="Enter your email or username"
               {...register("login", { required: true })}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             />
@@ -86,13 +87,16 @@ function Login() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition duration-200 disabled:opacity-70"
+            disabled={loginLoading}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition duration-200 disabled:opacity-70"
           >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            {loginLoading ? (
+              <>
+                <Loader2 className="animate-spin h-5 w-5" />
+                <span>Signing In...</span>
+              </>
             ) : (
-              "Sign in"
+              "Sign In"
             )}
           </button>
         </form>

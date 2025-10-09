@@ -11,7 +11,7 @@ export const userSubscribed = createAsyncThunk(
       const token = localStorage.getItem("accessToken");
 
       const response = await axios.post(
-        `${API}${import.meta.env.VITE_SUBSCRIBE_ENDPOINT}/${channelId}`,
+        `${API}/${import.meta.env.VITE_SUBSCRIBE_ENDPOINT}/${channelId}`,
         {},
         {
           headers: {
@@ -35,7 +35,7 @@ export const userUnsubscribed = createAsyncThunk(
       const token = localStorage.getItem("accessToken");
 
       await axios.delete(
-        `${API}${import.meta.env.VITE_UNSUBSCRIBE_ENDPOINT}/${channelId}`,
+        `${API}/${import.meta.env.VITE_UNSUBSCRIBE_ENDPOINT}/${channelId}`,
         {
           headers: {
             Authorization: token,

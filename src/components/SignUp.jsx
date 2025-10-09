@@ -11,7 +11,7 @@ function SignUp() {
   const [coverImage, setCoverImage] = useState(null);
 
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.auth.loading);
+  const {loginLoading,status} = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
 
@@ -39,6 +39,8 @@ function SignUp() {
         setMessage("");
       });
   };
+
+  
 
  
 
@@ -164,7 +166,7 @@ function SignUp() {
           </div>
 
           {/* Button */}
-          { loading ?  <button   className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-500 transition">Creating Account....</button>:<button
+          { loginLoading ?  <button   className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-500 transition">Creating Account....</button>:<button
             type="submit"
             className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-700 transition"
           >

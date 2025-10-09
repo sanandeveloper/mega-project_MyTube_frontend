@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllvideo } from "../store/videoStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { timeAgo } from "../../utils/Timeago";
 import Pagination from "../Pagination";
 
@@ -9,15 +9,18 @@ function ShowVideo() {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [limit] = useState(3);
+  const navigate=useNavigate()
 
   const { videos = [], loading, totalPages } = useSelector(
     (state) => state.video
   );
+ 
 
-  // ✅ Fetch videos whenever page or limit changes
   useEffect(() => {
     dispatch(getAllvideo({ page, limit }));
   }, [dispatch, page, limit]);
+
+    
 
   if (loading) {
     return (
@@ -26,6 +29,7 @@ function ShowVideo() {
       </div>
     );
   }
+ 
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
@@ -33,12 +37,13 @@ function ShowVideo() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {videos.map((video) => (
           <div
+          
             key={video._id}
             className="bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden cursor-pointer"
           >
-            <Link to={`/video/${video._id}/${video.owner.username}`}>
+            <Link  to={`/video/${video._id}/${video.owner.username}`}>
               <div className="relative w-full h-48 bg-gray-200">
-                {video.thumbnail ? (
+                {  video.thumbnail ? (
                   <img
                     src={video.thumbnail}
                     alt={video.title}
@@ -77,9 +82,8 @@ function ShowVideo() {
           </div>
         ))}
       </div>
-
-      {/* ✅ Pass totalPages here */}
-      <Pagination totalPages={totalPages || 1} setPage={setPage} page={page}  />
+  
+      <Pagination totallength={totalPages} totalPages={totalPages || 1} setPage={setPage} page={page}  />
     </div>
   );
 }

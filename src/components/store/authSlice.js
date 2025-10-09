@@ -310,18 +310,18 @@ export const userChannel = createAsyncThunk(
     try {
       console.log("username", username);
 
-      // const token=localStorage.getItem("accessToken")
+      const token=localStorage.getItem("accessToken")
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/${import.meta.env.VITE_USER_CHANNEL_ENDPOINT}/${username}`,
         {
-          // headers:{
-          //   Authorization:token
-          // }
+          headers:{
+            Authorization:token
+          }
         }
       );
 
-      console.log("responsed data", response.data);
+      console.log("User responsed data", response.data);
       return response.data?.data[0];
     } catch (error) {
       console.log("something went wrong", error);
@@ -335,6 +335,7 @@ const initialState = {
   error: null,
   status: false,
   Channel: null,
+  loginLoading: false,
 };
 
 const authSlice = createSlice({
@@ -343,23 +344,23 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createUser.pending, (state) => {
-        state.loading = true;
+        state.loginLoading = true;
       })
       .addCase(createUser.fulfilled, (state) => {
-        state.loading = false;
+        state.loginLoading = false;
       })
       .addCase(createUser.rejected, (state, action) => {
-        (state.loading = false), (state.error = action.payload);
+        (state.loginLoading = false), (state.error = action.payload);
       })
       .addCase(loginUser.pending, (state) => {
         state.status = false;
-        state.loading = true;
+        state.loginLoading = true;
       })
       .addCase(loginUser.fulfilled, (state) => {
-        state.loading = false;
+        state.loginLoading = false;
         state.status = true;
       }).addCase(loginUser.rejected, (state) => {
-        state.loading = false;
+        state.loginLoading = false;
        
       })
       .addCase(logoutUser.pending,(state)=>{
@@ -368,8 +369,6 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         (state.user = null), (state.status = false);
         state.loading = false;
-
-       
       }).addCase(logoutUser.rejected, (state) => {
         state.loading = false;
 

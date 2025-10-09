@@ -17,7 +17,7 @@ export const uploadedVideo = createAsyncThunk(
       formData.append("thumbnail", data.thumbnail);
 
       const response = await axios.post(
-        `${API}${import.meta.env.VITE_UPLOAD_VIDEO_ENDPOINT}`,
+        `${API}/${import.meta.env.VITE_UPLOAD_VIDEO_ENDPOINT}`,
         formData,
         {
           headers: {
@@ -38,7 +38,7 @@ export const getAllvideo = createAsyncThunk(
     console.log("page",page)
     try {
       const response = await axios.get(
-        `${API}${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`,{
+        `${API}/${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`,{
           params:{
             page:page,
             limit
@@ -96,13 +96,38 @@ export const deletelike = createAsyncThunk(
   }
 );
 
+
+export const Uservideo=createAsyncThunk("user-videos",async(id,{rejectWithValue})=>{
+
+  console.log("user video id",id)
+  try {
+    const token=localStorage.getItem("accessToken")
+    const reposne=await axios.get(`${API}/${import.meta.env.VITE_COUNT_VIDEO_ENDPOINT}/${id}`
+      ,{
+        headers:{
+          Authorization:token
+        }
+      }
+    )
+    console.log("reponse.data...ok",reposne.data.data)
+    return reposne.data.data
+    
+  } catch (error) {
+    console.log("error while getting user video",error)
+    return rejectWithValue(error)
+  }
+
+
+})
+
 const initialState = {
   videos: [],
   likeVideo: [],
   singleVideo: null,
   loading: false,
   error: null,
-  totalPages:null
+  totalPages:null,
+  userVideos:[],
 };
 
 const videoStore = createSlice({
@@ -135,7 +160,19 @@ const videoStore = createSlice({
         state.loading = false;
         state.singleVideo = action.payload.data;
         console.log("single video data",state.singleVideo)
-      });
+      })
+      .addCase(Uservideo.pending,(state)=>{
+       state.loading=true
+        
+      })
+      .addCase(Uservideo.fulfilled,(state,action)=>{
+       
+        state.loading=false
+        state.userVideos=action.payload
+
+        console.log("state.userVideo",state.userVideos)
+
+      })
   },
 });
 

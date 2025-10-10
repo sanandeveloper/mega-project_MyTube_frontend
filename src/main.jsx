@@ -20,6 +20,7 @@ import ShowVideo from "./components/video/ShowVideo.jsx";
 import VideoPlayer from "./components/video/VideoPlayer.jsx";
 import Protected from "./components/AuthLayout.jsx";
 import UserChannel from "./components/UserChannel.jsx";
+import PlayVideo from "./components/video/PlayVideo.jsx";
 
 const router = createBrowserRouter([
   {
@@ -129,9 +130,16 @@ const router = createBrowserRouter([
       {
         path: "/userchannel/:username/:id",
         element: (
-   
-            <UserChannel />
-       
+           <Protected authentication>
+            <UserChannel/>
+          </Protected>
+        ),
+      },{
+        path: "/playVideo/:id",
+        element: (
+           <Protected authentication>
+            <PlayVideo/>
+          </Protected>
         ),
       },
     ],

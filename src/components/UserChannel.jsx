@@ -1,15 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userChannel } from "./store/authSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Uservideo } from "./store/videoStore";
+import PlayVideo from "./video/PlayVideo";
+import { userSubscribed, userUnsubscribed } from "./store/subscriber";
 
 function UserChannel() {
   const { username, id } = useParams();
   const authStatus = useSelector((state) => state.auth.status);
   const dispatch = useDispatch();
   const { Channel, loading } = useSelector((state) => state.auth);
-  const { videos,userVideos } = useSelector((state) => state.video || []);
+  const { videos, userVideos } = useSelector((state) => state.video || []);
+  console.log("userVideos", userVideos);
+  console.log("channel", Channel);
+
+  const [videoId, setVideoId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (username && id) {
@@ -18,7 +25,23 @@ function UserChannel() {
     }
   }, [dispatch, username, authStatus]);
 
-  if (loading || !Channel) {
+  const handleSubscribeToggle = useCallback(() => {
+    if (Channel.isSubscribed) {
+      dispatch(userUnsubscribed(Channel._id))
+        .unwrap()
+        .then(() => {
+          dispatch(userChannel(username));
+        });
+    } else {
+      dispatch(userSubscribed(Channel._id))
+        .unwrap()
+        .then(() => {
+          dispatch(userChannel(username));
+        });
+    }
+  }, [Channel]);
+
+  if (!Channel) {
     return (
       <div className="min-h-screen bg-white p-6 animate-pulse">
         <div className="max-w-6xl mx-auto">
@@ -70,13 +93,19 @@ function UserChannel() {
             </div>
           </div>
 
-          {/* Subscribe Button */}
-          <button className="bg-red-600 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-700 transition">
-            Subscribe
+          <button
+            onClick={handleSubscribeToggle}
+            className={`font-semibold px-6 py-2 rounded-full transition-all duration-300
+    ${
+      Channel.isSubscribed
+        ? "bg-gray-200 text-gray-800 hover:bg-gray-300 border border-gray-400"
+        : "bg-red-600 text-white hover:bg-red-700 shadow-md"
+    }`}
+          >
+            {Channel.isSubscribed ? "Subscribed" : "Subscribe"}
           </button>
         </div>
 
-        {/* Channel Description */}
         <div className="mt-6 text-gray-700 leading-relaxed">
           <p>
             Welcome to my channel! Here I share tutorials, vlogs, and insights
@@ -85,11 +114,8 @@ function UserChannel() {
           </p>
         </div>
 
-        {/* Reels / Videos Section */}
         <div className="mt-10">
-          <h2 className="text-2xl font-semibold mb-5 border-b pb-2">
-            Videos
-          </h2>
+          <h2 className="text-2xl font-semibold mb-5 border-b pb-2">Videos</h2>
 
           {userVideos && userVideos.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-5">
@@ -98,33 +124,28 @@ function UserChannel() {
                   key={video._id}
                   className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
                 >
-                  <div className="relative w-full h-64 bg-gray-100 overflow-hidden">
-                    <img
-                      src={video.thumbnail || video.videoFile}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                  <div
+                    onClick={() => navigate(`/playVideo/${video._id}`)}
+                    className="relative w-full h-64 bg-gray-100 overflow-hidden"
+                  >
+                    {video.thumbnail ? (
+                      <img
+                        src={video.thumbnail || video.videoFile}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div>
+                        <video
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          src={video.videoFile}
+                          alt=""
+                        />
+                      </div>
+                    )}
+                    {/* <PlayVideo videoId={videoId} setVideoId={setVideoId}/> */}
                     <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-0.5 rounded">
                       {video.views} views
-                    </div>
-                  </div>
-
-                  <div className="p-3 flex gap-3">
-                    <img
-                      src={video.owner?.avatar}
-                      alt={video.owner?.username}
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm line-clamp-2">
-                        {video.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {video.owner?.username}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {new Date(video.createdAt).toLocaleDateString()}
-                      </p>
                     </div>
                   </div>
                 </div>

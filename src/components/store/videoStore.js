@@ -34,14 +34,16 @@ export const uploadedVideo = createAsyncThunk(
 
 export const getAllvideo = createAsyncThunk(
   "video/getAll",
-  async ({page,limit}) => {
+  async ({page,limit,search=""}) => {
     console.log("page",page)
+    console.log("pagelol",search)
     try {
       const response = await axios.get(
         `${API}/${import.meta.env.VITE_GET_ALL_VIDEOS_ENDPOINT}`,{
           params:{
             page:page,
-            limit
+            limit,
+            search
           }
         }
       );

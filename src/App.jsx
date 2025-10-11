@@ -1,32 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-import "./App.css";
-import { Outlet } from "react-router-dom";
-import Header from "./components/Header/Header";
-import { useDispatch, useSelector } from "react-redux";
-import { getCurrentUser } from "./components/store/authSlice";
-import Home from "./components/Home";
+import './App.css'
+import { Outlet } from 'react-router-dom'
+import Header from './components/Header/Header'
+import { useDispatch, useSelector } from 'react-redux'
+import { getCurrentUser } from './components/store/authSlice'
+import ShowVideo from './components/video/ShowVideo'
+
 
 function App() {
-  const { status } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
 
-  const token = localStorage.getItem("accessToken");
+  const {status}=useSelector((state)=>state.auth)
+  const dispatch=useDispatch()
 
-  useEffect(() => {
-    if (token) {
-      dispatch(getCurrentUser());
-    }
-  }, [token, status]);
+ const token= localStorage.getItem("accessToken")
 
+useEffect(()=>{
+
+ if (token) {
+    dispatch(getCurrentUser())
+ }
+
+},[token,status])
+
+
+  
   return (
     <>
-      <Home />
-      <main>
-        <Outlet />
-      </main>
+    <Header/>
+   <main>   
+    <Outlet/>
+   </main>
     </>
-  );
+  )
 }
 
-export default App;
+export default App

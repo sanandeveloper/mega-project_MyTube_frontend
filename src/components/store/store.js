@@ -2,6 +2,7 @@
   import authSlice from "./authSlice"
   import videoStore from "./videoStore"
   import subscriberData from "./subscriber";
+  import searchSlice from "./searchSlice"
 
 
 
@@ -10,7 +11,8 @@
         reducer:{
            auth:authSlice,
            video:videoStore,
-           subs:subscriberData
+           subs:subscriberData,
+           search:searchSlice
         }
     }
   )

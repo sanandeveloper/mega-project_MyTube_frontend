@@ -116,6 +116,10 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/",
+        element: <ShowVideo />,
+      },
+      {
         path: "/video/:id/:username",
         element: (
         <Protected authentication>

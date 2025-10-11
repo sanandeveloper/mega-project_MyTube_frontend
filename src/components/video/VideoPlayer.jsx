@@ -17,15 +17,17 @@ function VideoPlayer() {
   console.log("channel", Channel);
   const hasUserLiked = singleVideo?.likedVideo?.includes(user?._id || null);
   console.log("singlevideodata", singleVideo);
-
+  const token=localStorage.getItem("accessToken")
   useEffect(() => {
-    if (id) {
+
+   
+    if (id && token) {
       dispatch(playSingleVideo(id));
     }
-    if (username) {
+    if (username && token) {
       dispatch(userChannel(username));
     }
-  }, [id, dispatch, username]);
+  }, [id, dispatch, username,token]);
 
   const usersChannel = () => {
     navigate(`/userchannel/${username}/${singleVideo.owner?._id}`);

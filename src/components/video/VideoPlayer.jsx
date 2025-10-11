@@ -27,7 +27,7 @@ function VideoPlayer() {
     if (username && token) {
       dispatch(userChannel(username));
     }
-  }, [id, dispatch, username,token]);
+  }, [id, dispatch, username,token,status]);
 
   const usersChannel = () => {
     navigate(`/userchannel/${username}/${singleVideo.owner?._id}`);

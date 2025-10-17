@@ -21,6 +21,11 @@ function Header(props) {
 
  console.log("texting",text)
   useEffect(()=>{
+  
+    if (text.trim==="") {
+      return
+    }
+
    dispatch(SearchText(text))
 
 

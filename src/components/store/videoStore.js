@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+});
+
+
 
 const API = import.meta.env.VITE_API_BASE_URL 
 
@@ -60,7 +65,10 @@ export const playSingleVideo = createAsyncThunk(
   "video/play",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API}/${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`);
+      const token= localStorage.getItem("accessToken");
+      const response = await axios.get(`${API}/${import.meta.env.VITE_SINGLE_VIDEO_ENDPOINT}/${id}`,{
+        headers:{Authorization:token}
+      });
       return response.data?.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

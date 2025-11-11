@@ -71,7 +71,7 @@ export const logoutUser = createAsyncThunk("logout", async () => {
         import.meta.env.VITE_LOGOUT_ENDPOINT
       }`,
       {},
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: token} }
     );
 
     localStorage.removeItem("accessToken");
@@ -98,7 +98,7 @@ export const changeAvatar = createAsyncThunk(
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization:  token,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -122,7 +122,7 @@ export const removeAvatar = createAsyncThunk(
           import.meta.env.VITE_REMOVE_AVATAR_ENDPOINT
         }`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: token } }
       );
 
       return {
@@ -151,7 +151,7 @@ export const coverImageUpdate = createAsyncThunk(
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization:token,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -174,7 +174,7 @@ export const getCurrentUser = createAsyncThunk(
         `${import.meta.env.VITE_API_BASE_URL}/${
           import.meta.env.VITE_CURRENT_USER_ENDPOINT
         }`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: token } }
       );
 
       return response.data;
@@ -195,7 +195,7 @@ export const changeName = createAsyncThunk(
           import.meta.env.VITE_UPDATE_NAME_ENDPOINT
         }`,
         { fullName: data },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: token } }
       );
 
       return response.data;
@@ -218,7 +218,7 @@ export const updateUsername = createAsyncThunk(
         { username: data },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization:token,
             "Content-Type": "application/json",
           },
         }
@@ -242,7 +242,7 @@ export const updateEmail = createAsyncThunk(
           import.meta.env.VITE_UPDATE_EMAIL_ENDPOINT
         }`,
         { email: data },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: token } }
       );
 
       return response.data;
@@ -267,7 +267,7 @@ export const changePassword = createAsyncThunk(
           newPassword: data.newPassword,
           confirmPassword: data.confirmPassword,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization:token } }
       );
 
       return response.data?.data;

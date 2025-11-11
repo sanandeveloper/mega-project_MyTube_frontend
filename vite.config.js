@@ -1,17 +1,15 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  server:{
-    proxy:{
-
-      "/api/v1/video":"http://localhost:8000",
-       "/api/v1/users":"http://localhost:8000"
-    }
+  server: {
+    proxy: {
+      "/api/v1/video": "http://localhost:8000",
+      "/api/v1/users": "http://localhost:8000",
+    },
   },
 
-  plugins: [react(),tailwindcss()],
-})
+  plugins: [react(), tailwindcss()],
+});

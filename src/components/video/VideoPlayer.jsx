@@ -1,185 +1,163 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deletelike, likeVideos, playSingleVideo } from "../store/videoStore";
 import { ThumbsUp } from "lucide-react";
 import { userChannel } from "../store/authSlice";
 import { userSubscribed, userUnsubscribed } from "../store/subscriber";
+import { Suspense } from "react";
+import { getVideoComments } from "../store/comment";
 
+const Comments = React.lazy(() => import("./Comments"));
 function VideoPlayer() {
   const navigate = useNavigate();
   const { id, username } = useParams();
   const dispatch = useDispatch();
   const { loading, singleVideo } = useSelector((state) => state.video);
   const { user, Channel, status } = useSelector((state) => state.auth);
-  console.log("channel.isubscribed", Channel, "status", status);
+  const token = localStorage.getItem("accessToken");
 
-  console.log("channel", Channel);
   const hasUserLiked = singleVideo?.likedVideo?.includes(user?._id || null);
-  console.log("singlevideodata", singleVideo);
-  const token=localStorage.getItem("accessToken")
+
   useEffect(() => {
+    if (id && token) dispatch(playSingleVideo(id));
+    if (username && token) dispatch(userChannel(username));
+      // dispatch(getVideoComments(id))
+    if (!id) return;
+  
+  }, [id, username, token, dispatch, status]);
 
-   
-    if (id && token) {
-      dispatch(playSingleVideo(id));
-    }
-    if (username && token) {
-      dispatch(userChannel(username));
-    }
-  }, [id, dispatch, username,token,status]);
-
-  const usersChannel = () => {
+  const handleChannelNavigate = () => {
     navigate(`/userchannel/${username}/${singleVideo.owner?._id}`);
   };
 
-  const handletogglelikedVideo = () => {
+  const handleToggleLike = async () => {
+    if (!status) return navigate("/login");
+
     if (hasUserLiked) {
-      if (id) {
-        dispatch(deletelike(id))
-          .unwrap()
-          .then(() => {
-            if (username) {
-              dispatch(userChannel(username));
-              if (id) {
-                dispatch(playSingleVideo(id));
-              }
-            }
-          });
-      }
+      await dispatch(deletelike(id)).unwrap();
     } else {
-      if (id) {
-        dispatch(likeVideos(id))
-          .unwrap()
-          .then(() => {
-            if (username) {
-              dispatch(userChannel(username));
-            }
-            if (id) {
-              dispatch(playSingleVideo(id));
-            }
-          });
-      }
+      await dispatch(likeVideos(id)).unwrap();
     }
+
+    dispatch(playSingleVideo(id));
+    dispatch(userChannel(username));
   };
 
-  const handleSubscribeToggle = () => {
-    if (!status) {
-      navigate("/login");
-    }
+  const handleSubscribeToggle = async () => {
+    if (!status) return navigate("/login");
 
     if (Channel.isSubscribed) {
-      dispatch(userUnsubscribed(Channel._id))
-        .unwrap()
-        .then(() => {
-          if (username) {
-            dispatch(userChannel(username));
-          }
-        });
+      await dispatch(userUnsubscribed(Channel._id)).unwrap();
     } else {
-      dispatch(userSubscribed(Channel._id))
-        .unwrap()
-        .then(() => {
-          if (username) {
-            dispatch(userChannel(username));
-          }
-        });
+      await dispatch(userSubscribed(Channel._id)).unwrap();
     }
+
+    dispatch(userChannel(username));
   };
 
   if (!singleVideo || !Channel) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="flex flex-col items-center">
-         
+      <div className="flex justify-center items-center h-screen bg-black text-white">
+        <div className="flex flex-col items-center space-y-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-
-       
-          <p className="mt-4 text-gray-600 font-medium">Loading video...</p>
+          <p className="text-gray-400">Loading video...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen  text-black">
-      <div className="flex-1 flex flex-col items-center lg:items-start px-4 lg:px-10 py-6">
-        <div className="w-full max-w-5xl  bg-black">
-          <video
-            src={singleVideo.videoFile}
-            controls
-            autoPlay
-            playsInline
-            className="w-full max-h-[600px] rounded-lg shadow-lg"
-          >
-            <track
-              src="/subtitles-en.vtt"
-              kind="subtitles"
-              srcLang="en"
-              label="English"
-              default
+    <div className="flex flex-col min-h-screen bg-[#0f0f0f] text-white">
+      {/* Video Player Section */}
+      <div className="flex flex-col lg:flex-row w-full px-4 lg:px-12 py-6">
+        <div className="flex-1 flex flex-col items-center lg:items-start">
+          {/* Video */}
+          <div className="w-full max-w-5xl bg-black rounded-xl overflow-hidden shadow-lg">
+            <video
+              src={singleVideo.videoFile}
+              controls
+              autoPlay
+              playsInline
+              className="w-full max-h-[700px] rounded-lg"
             />
-          </video>
-        </div>
+          </div>
 
-        {/* Title */}
-        <h2 className="mt-4 text-xl lg:text-2xl font-bold w-full max-w-5xl">
-          {singleVideo.title}
-        </h2>
+          {/* Title */}
+          <h2 className="mt-4 text-xl lg:text-2xl font-bold w-full max-w-5xl">
+            {singleVideo.title}
+          </h2>
 
-        <div className="w-full max-w-5xl mt-2 flex flex-col lg:flex-row lg:items-center justify-between text-gray-600 text-sm">
-          <span>{singleVideo.views} views</span>
-          <span>
-            {new Date(singleVideo?.createdAt || "").toLocaleDateString()}
-          </span>
-        </div>
+          {/* Views and Date */}
+          <div className="w-full max-w-5xl mt-2 flex flex-col lg:flex-row lg:items-center justify-between text-gray-400 text-sm">
+            <span>{singleVideo.views} views</span>
+            <span>
+              {new Date(singleVideo?.createdAt || "").toLocaleDateString()}
+            </span>
+          </div>
 
-        <div className="w-full max-w-5xl flex flex-col lg:flex-row lg:items-center mt-6 border-t border-gray-200 pt-4 justify-between">
-          <div className="flex items-center">
-            <img
-              onClick={usersChannel}
-              src={Channel.avatar || "/default-avatar.png"}
-              alt="owner avatar"
-              className="w-12 h-12 rounded-full mr-4"
-            />
-            <div>
-              <p className="font-semibold">{singleVideo.owner?.fullName}</p>
-              <p className="text-gray-500 text-sm">
-                {Channel.channelSubscriber} subscriber
-              </p>
+          {/* Channel + Like + Subscribe */}
+          <div className="w-full max-w-5xl flex flex-col lg:flex-row lg:items-center mt-6 border-t border-gray-700 pt-4 justify-between">
+            {/* Channel Info */}
+            <div
+              onClick={handleChannelNavigate}
+              className="flex items-center cursor-pointer hover:opacity-90"
+            >
+              <img
+                src={Channel.avatar || "/default-avatar.png"}
+                alt="Channel avatar"
+                className="w-12 h-12 rounded-full mr-4"
+              />
+              <div>
+                <p className="font-semibold text-lg">
+                  {singleVideo.owner?.fullName}
+                </p>
+                <p className="text-gray-400 text-sm">
+                  {Channel.channelSubscriber || 0} subscribers
+                </p>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex items-center gap-4 mt-4 lg:mt-0">
+              <button
+                onClick={handleSubscribeToggle}
+                className={`px-6 py-2 rounded-full font-semibold shadow transition-all duration-200 ${
+                  Channel.isSubscribed
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-white text-black hover:bg-gray-200"
+                }`}
+              >
+                {Channel.isSubscribed ? "Subscribed" : "Subscribe"}
+              </button>
+
+              <button
+                onClick={handleToggleLike}
+                className={`flex items-center gap-2 px-5 py-2 rounded-full border shadow transition ${
+                  hasUserLiked
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-[#272727] text-gray-300 hover:bg-[#383838] border-gray-600"
+                }`}
+              >
+                <ThumbsUp className="w-5 h-5" />
+                <span>{singleVideo?.likedVideo?.length ?? 0}</span>
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 mt-4 lg:mt-0">
-            <button
-              onClick={handleSubscribeToggle}
-              className={`px-6 py-2 rounded-full font-semibold shadow-md transition duration-300 ease-in-out
-    ${
-      Channel.isSubscribed
-        ? "bg-red-600 text-white hover:bg-red-700"
-        : "bg-blue-600 text-white hover:bg-blue-700"
-    }`}
-            >
-              {Channel.isSubscribed ? "Unsubscribe" : "Subscribe"}
-            </button>
-
-            <button
-              onClick={handletogglelikedVideo}
-              className={`  flex items-center gap-2 px-5 py-2 rounded-full shadow border transition  ${
-                hasUserLiked
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300"
-              }`}
-            >
-              <ThumbsUp className="w-5 h-5" />
-              {hasUserLiked ? "UnLiked" : "Like" || null}{" "}
-              {singleVideo?.likedVideo?.length ?? 0}
-            </button>
+          {/* Description */}
+          <div className="w-full max-w-5xl mt-6 bg-[#272727] p-4 rounded-xl">
+            <p className="text-gray-300 leading-relaxed">
+              {singleVideo.description || "No description available."}
+            </p>
           </div>
-        </div>
 
-        <div className="w-full max-w-5xl mt-6 bg-gray-100 p-4 rounded-lg">
-          <p className="text-gray-700">{singleVideo.description}</p>
+          {/* Comments */}
+          <div className="w-full max-w-5xl mt-8">
+            <Suspense fallback={<div className="text-gray-400">Loading comments...</div>}>
+              <Comments />
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>
